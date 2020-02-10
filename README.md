@@ -1,9 +1,8 @@
 # voting_patterns
 
-A sandbox for data-analysis using voting results of the Berlin municipal election. 
+Voting data sets are a convenient platform for data science analysis for several reasons: they are quantifiable measurements of human social psychology, and they exhibit the right balance of noise as well as intuitive trends. In Germany, in particular, the compulsory `Wohnmeldungs' allow for very detailed information in each riding. Moreover, in Berlin (as well as at the national level), East/West divide provides a prominent feature for binary classification.
 
-After reducing to the major parties, and clustering based on party standings, three clusters emerge, which can be illustrated on 
-the map as shown below
+The results shown in this report represent the results of playing with this data a bit.
 
 ![](figures/BMap_Ccoded.png) 
 
