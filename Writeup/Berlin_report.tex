@@ -16,8 +16,8 @@
 
 
 
-\title{Berlin voting patterns, by district, reveal patterns in integration. \newline {\color{red} Work in progress: Please do not redistribute.}  }
-\author{Bren Osberg}
+\title{Berlin voting patterns, by district, reveal patterns in integration. \newline {\color{red} Work in progress.}  }
+\author{Brendan Osberg}
 
 \date{\today}
 
@@ -28,15 +28,13 @@ Voting data sets are a convenient platform for data science analysis for several
 The results shown in this report represent the results of playing with this data a bit.
 
 
-That an ideological divide remains  between districts from the East and West has long been known qualitatively, however I want to  quantify it more precisely here and demonstrate that integration has actually succeeded in some demographics \--here, I try to delineate where exactly that's the case.
-
-To do that I performed cluster analysis on the $N=$1,779 districts of the city according to their vote-distribution among the major parties. Assuming complete lack of integration, one would expect to see two clusters emerge, however I observed \emph{three}. 
+That an ideological divide remains  between districts from the East and West has long been known qualitatively, however I want to  quantify it more precisely here and demonstrate that integration has actually succeeded in some demographics.
+I start by performing cluster analysis on the $N=$1,779 districts of the city according to their vote-distribution among the major parties; \emph{three} clusters are observed. 
 
 Two of the clusters, as expected, were overwhelmingly dominated by points east and west of the former wall respectively. A third cluster, however, was ditributed almost exactly according to the null distribution of overall districts \---indicating that the barrier no longer has ideological significance to voters there. Where are these districts? More to the point: where exactly have efforts at integration been particularly successful? 
 
 It turns out that it is in these regions where the Green party derives much of its support. What is it that the Green party are doing particularly well, compared to other parties in appealing to moderate (or `integrated') voters on both sides of the wall?
 
-Here I present the results of analysis from the latest election in Berlin, and a brief summary of my plans to extend this same work to the national level (although unfortunately, I've been unable to obtain geo-data at the national level to render maps). Some of the content here may seem too `academic' for a newspaper, but I'll leave the draft in tact, as I haven't decided what I might do with it later. The figures will be the most important part, and will be largely self-explanatory.
 \end{abstract}
 
 \maketitle
@@ -51,7 +49,7 @@ Here I present the results of analysis from the latest election in Berlin, and a
 \section{ Methodology:}
 
 \begin{itemize}
-\item  we took publicly available data from the  1779 voting districts in Berlin from the 2016 election; Votes carried out by mail showed the same trend but lower sample size, thus we focus on the "Urnenwahlbezirk"s.
+\item  I took publicly available data from the  1779 voting districts in Berlin from the 2016 election; Votes carried out by mail showed the same trend but lower sample size, thus we focus on the "Urnenwahlbezirk"s.
 
 \item All parties that received less than 5\% of the total vote were eliminated from the analysis. This preserved the $D=$6 `major'  parties in the following order: SPD, CDU, Green, Linke, AfD, and FDP.
  % (social democratic/labour), CDU (moderate conservative), Green (environmental), Linke (hard leftist; comprised of a lot of former DDR supporters), AfD (nationalist right-wing extremist), FDP (libertarian).
