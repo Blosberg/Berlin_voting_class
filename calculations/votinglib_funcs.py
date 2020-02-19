@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.cluster       import KMeans
+from sklearn.decomposition import PCA
 import math
 import numpy as np
 
@@ -11,18 +12,18 @@ def get_major_minor_parties( DT, MAJ_PARTY_THRESH=0.05 ):
     party_names_all = DT.columns
     # Collect vote totals per party
     party_votes = [ sum( votes_RAW[:,n]) for n in range(n_parties_all) ]
-    
+
     # And sum them up for the total num votes over all parties
     Total_votes_allparties = sum(party_votes)
     # print( Total_votes_allparties )
-    
+
     # Now determine the fraction of all votes allocated to each party
     party_voteshare = [ party_votes[n]/Total_votes_allparties for n in range(n_parties_all) ]
-    
+
     # And define the "major" parties as those above 5% total support
     major_parties = [ party_names_all[p] for p in range(n_parties_all) if party_voteshare[p]> MAJ_PARTY_THRESH ]
     minor_parties = list( party_names_all.difference( major_parties ) )
-    
+
     # n_parties_major = len(major_parties)
     return (major_parties, minor_parties)
 
@@ -31,18 +32,18 @@ def get_normal_maj_VS( Dat_in, major_parties, minor_parties, add_other = False )
     # Select just the major parties:
     D_major         = Dat_in[major_parties]
     D_major.index   = range( D_major.shape[0] )
-    
-    
+
+
     if( add_other):
         # === Collect the invalid + minor party votes, and bin them all into a separate column "other"
         Other=pd.DataFrame( { "Other": [sum((Dat_in[minor_parties+["invalid"]]).values[n,:]) for n in range(Dat_in.shape[0]) ] } )
-        
+
         # Create a df with just these "parties"
         D_filtered = pd.merge( D_major,
                                Other,
                                left_index=True,
                                right_index=True )
-    
+
     else:
         D_filtered = D_major
 
@@ -181,3 +182,80 @@ def rotate_data_along_vec_PCs( Dat, vec, TOL=0.0001 ):
 #     # DOWN TO HERE
 
     return ( Dat_output )
+
+# ========================================================
+def save_fig(fig_id, tight_layout=True):
+    path = os.path.join(WORKDIR, "images", fig_id + ".png")
+    print("Saving figure", fig_id)
+    if tight_layout:
+        plt.tight_layout()
+    plt.savefig(path, format='png', dpi=300)
+
+# ========================================================
+def filter_winner( Dat_table, OW_list, party_list, filterparty ):
+
+    N=Dat_table.shape[0]
+
+    Winner_list  = np.array( [ Dat_table.columns[np.argmax( Dat_table.iloc[n].values)] for n in  range(N) ] )
+
+    Dat_filtered = Dat_table[ Winner_list != filterparty ]
+    OW_filtered  = OW_list[   Winner_list != filterparty ]
+
+    return( Dat_filtered, OW_filtered )
+
+# ========================================================
+def generate_ccodes( Dat_table, OW_list, party_list, pkey="GRÜNE", Wcode="blue", Ocode="red", Gcode="green"):
+    # Color codes for plotting
+    # takes characters or ints as code for O/W with the convention: "W"-->0, "O"-->1
+
+    N=Dat_table.shape[0]
+    # Get a list of names corresponding to the party that got the most votes
+    Winner_list = np.array( [ party_list[np.argmax( Dat_table.iloc[n].values)]
+                                     for n in range(N) ] )
+
+    OW       = [ Wcode if (x=="W" or x==0 ) else  Ocode  for x in OW_list         ]
+    Go20pc   = [ Gcode if (  x > 0.2      ) else "black" for x in Dat_table[pkey] ]
+    Gwinner  = [ Gcode if (x==pkey or x==2) else "black" for x in Winner_list     ]
+
+    Gwinner_OW  = [ Gcode if (Winner_list[x]==pkey or Winner_list[x]==2)
+                            else Wcode if ( OW_list[x]=="W" or OW_list[x]==0 )
+                            else Ocode
+                    for x in range(len(Winner_list)) ]
+
+    Go20pc_OW   = [ Gcode if Dat_table[pkey].iloc[x] >0.2
+                            else Wcode if OW_list[x]=="W"
+                            else Ocode
+                    for x in range(len(Winner_list)) ]
+    return ( {"OW"         :OW,
+              "Go20pc_OW"  :Go20pc_OW,
+              "Gwinner"    :Gwinner,
+              "Gwinner_OW" :Gwinner_OW,
+              "Go20pc_OW"  :Go20pc_OW
+             } )
+# ========================================================
+class model_dataset():
+    """A class representing a single quotient."""
+    def __init__( self, Data_all, target, party_list, frac_train=0.85, rngSEED=42):
+
+        N                = Data_all.shape[0]
+        pca  = PCA()
+
+        self.n_train     = int( frac_train * N)
+        self.n_test      = N-self.n_train
+        rng              = np.random.default_rng(rngSEED)
+        self.train_pts   = list( rng.choice( N,
+                                            size    = self.n_train,
+                                            replace = False
+                                           )
+                               )
+        self.train_dat     = Data_all.iloc[ self.train_pts ]
+        self.train_dat_PCA = pca.fit_transform( self.train_dat.values )
+        self.train_y       = target[ self.train_pts ]
+        self.train_ccode   = generate_ccodes( self.train_dat, self.train_y, party_list)
+
+        self.test_pts     = list ( set(range(N)).difference(set(self.train_pts)) )
+        self.test_dat     = Data_all.iloc[ self.test_pts  ]
+        self.test_dat_PCA = pca.fit_transform( self.test_dat.values )
+        self.test_y       = target[ self.test_pts  ]
+        self.test_ccode   = generate_ccodes( self.test_dat, self.test_y, party_list)
+
