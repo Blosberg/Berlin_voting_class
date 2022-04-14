@@ -1,7 +1,5 @@
 ##-------------- BV_SVM.R - By Bren Osberg, MDC Berlin, started October 2016.
-#-- last updated on never.
-
-##--- Does support vector classification on the voting districts in Berlin
+## support vector classification on the voting districts in Berlin
 ## ==================================================================================================
 
 # install.packages("tmap")
@@ -15,19 +13,17 @@ library("tmap")
 library("leaflet")
 library("tmaptools")
 
-# CLEAN UP EVERYTHING:
-
 # == shape data can be obtained from: 
 # == https://www.wahlen-berlin.de/wahlen/BE2016/Wahlkreiseinteil/wahlkreiseinteil.asp?sel1=1253&sel2=1045
 # == actual voting data obtained from:
 # == https://www.wahlen-berlin.de/Wahlen/BE2016/afspraes/download/download.html
 
 
+# CLEAN UP
 rm(list=ls())
-setwd("/Users/blosberg/Desktop/Science/postdoc_MDC/Berlin_vote/calculations/")
+
 source('./funcs_Berlin.R') #---get what functions you need.
-source('/Users/blosberg/Desktop/Science/Code_library/funcs_general.R')
-# source('/Users/blosberg/Desktop/Science/2016_postdoc_MDC/RCode_deconv/func_def.R') #---get what functions you need.
+source('Code_library/funcs_general.R')
 
 #takesep="cl12"
 takesep="OW"
@@ -47,7 +43,7 @@ covariate_data_init = read.csv("./source_data/DL_BE_AH2016_covariates_Strukturda
 # covariate_data_init = read.table("./source_data/DL_BE_AH2016_covariates_Strukturdaten.csv",sep="\t", header=TRUE,stringsAsFactors=FALSE,                                  colClasses=c('character'))
 # covariate_data_init[1:5,1:5]
 
-#--- now get rid of all parties below 1%
+#--- now get rid of all parties below 5%
 dim_Data_init = dim(Data_init)
 
 should_keep =  matrix(TRUE, 1, dim_Data_init[2]); names(should_keep) = names(Data_init)
@@ -68,7 +64,7 @@ for( i in c(18:dim_Data_init[2]) )
 Data     = Data_init[,should_keep]
 num_parties=sum(as.integer(should_keep[18:dim_Data_init[2]]))
 dim_Data = dim(Data)
-#============== THIS IS NOW THE DATA MATRIX WITH ONLY THE PARTIES OVER 1% INCLUDED.       =======
+#============== THIS IS NOW THE DATA MATRIX WITH ONLY THE PARTIES OVER THRESHOLD INCLUDED.       =======
 #============== "Urn" and "Brief" results are still mixed. Next step is to seperate those =======
 Data_Urn   = Data[ Data[,6]=="Urnenwahlbezirk", ]
 Data_Brief = Data[ Data[,6]=="Briefwahlbezirk", ]
@@ -89,15 +85,15 @@ Data_Brief = Data[ Data[,6]=="Briefwahlbezirk", ]
   Data_Urn        = temp2
   vote_share_Urn  = Data_Urn[,18:(18+num_parties-1)]/rowSums(Data_Urn[,18:(18+num_parties-1)])
   
-  #--- now do the same reorganization for the covariate data (i.e. put in same order as in the geo-shape file)
-    # --- Again, first grab the last two entries displaced to the end of the shape file:
+  # --- now do the same reorganization for the covariate data (i.e. put in same order as in the geo-shape file)
+  # --- Again, first grab the last two entries displaced to the end of the shape file:
   
   temp_data = rearrange_covariate_to_match_shape_file(covariate_data_init, Berlingeo_fine)
   TEST_covmap = identical( paste( district_string(temp_data[,2]), temp_data[,4], sep=""  ),  paste( Berlingeo_fine$BEZ, Berlingeo_fine$UWB, sep=""  ) )
   covariate_data_rearranged = temp_data
   
 #=====================================================================================================
-#==== PERFORMED THESE CHECKS A SUFFICIENT NUMBER OF TIMES TO BE CONFIDENT THAT THEY PASS. SKIPPING THEM NOW FOR EFFICIENCY.
+#==== PERFORMED THESE SANITY CHECKS A SUFFICIENT NUMBER OF TIMES TO BE CONFIDENT THAT THEY PASS. SKIPPING THEM NOW FOR EFFICIENCY.
 # # 
 #  TEST_BEZMATCH =  identical(as.integer(as.character(temp2[,3])) ,as.integer(as.character(Berlingeo_fine$BEZ)) )
 #  TEST_UWBMATCH =  identical(as.integer(as.character(temp2[,5])) ,as.integer(as.character(Berlingeo_fine$UWB)) )
@@ -124,8 +120,6 @@ Data_Brief = Data[ Data[,6]=="Briefwahlbezirk", ]
 #   }
 #=====================================================================================================
  
-
-
 # qtm(Berlingeo_fine) # --- will make the plot of the city show up as a figure.
 # str(Berlingeo_fine) # --- will print out text data of the contents.
 
