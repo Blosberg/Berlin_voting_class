@@ -16,24 +16,23 @@
 
 
 
-\title{Berlin voting patterns, by district, reveal patterns in integration. \newline {\color{red} Work in progress.}  }
+\title{Geographical Voting Patterns in Berlin: \\ a Brief Data Science Case-Study.  }
 \author{Brendan Osberg}
 
 \date{\today}
 
 \begin{abstract}
 
-Voting data sets are a convenient platform for data science analysis for several reasons: they are quantifiable measurements of human social psychology, and they exhibit the right balance of noise as well as intuitive trends. In Germany, in particular, the compulsory `Wohnmeldungs' allow for very detailed information in each riding. Moreover, in Berlin (as well as at the national level), East/West divide provides a prominent feature for binary classification. 
-
-The results shown in this report represent the results of playing with this data a bit.
+Voting data sets are a convenient platform for data science: they are quantifiable, controlled, and they exhibit the right balance of noise and signal. In Germany, in particular, the compulsory `Wohnmeldungs' allow for very detailed information in each riding. Moreover, in Berlin (as well as at the national level), the historical East/West divide provides a prominent feature for binary classification.
+The results shown in this report represent the results of playing with this data a bit, primarily as a pedagogical tool for data science methodology.
 
 
 That an ideological divide remains  between districts from the East and West has long been known qualitatively, however I want to  quantify it more precisely here and demonstrate that integration has actually succeeded in some demographics.
 I start by performing cluster analysis on the $N=$1,779 districts of the city according to their vote-distribution among the major parties; \emph{three} clusters are observed. 
 
-Two of the clusters, as expected, were overwhelmingly dominated by points east and west of the former wall respectively. A third cluster, however, was ditributed almost exactly according to the null distribution of overall districts \---indicating that the barrier no longer has ideological significance to voters there. Where are these districts? More to the point: where exactly have efforts at integration been particularly successful? 
+Two of the clusters, as expected, were overwhelmingly dominated by points east and west of the former wall respectively. A third cluster, however, was distributed almost exactly according to the null distribution of overall districts \---indicating that the barrier no longer has ideological significance to voters there. Where are these districts? More to the point: where exactly have efforts at integration been particularly successful? 
 
-It turns out that it is in these regions where the Green party derives much of its support. What is it that the Green party are doing particularly well, compared to other parties in appealing to moderate (or `integrated') voters on both sides of the wall?
+It turns out that it is in these regions where the Green party derives much of its support. What is it that the Green party are doing particularly well, compared to other parties in appealing to moderate (or `integrated') voters from both sides of the former wall?
 
 \end{abstract}
 
@@ -49,7 +48,7 @@ It turns out that it is in these regions where the Green party derives much of i
 \section{ Methodology:}
 
 \begin{itemize}
-\item  I took publicly available data from the  1779 voting districts in Berlin from the 2016 election; Votes carried out by mail showed the same trend but lower sample size, thus we focus on the "Urnenwahlbezirk"s.
+\item  I took publicly available data from the  1779 voting districts in Berlin from the 2016 election; Votes carried out by mail showed the same trend but lower sample size, thus we focus on the ``Urnenwahlbezirk"s.
 
 \item All parties that received less than 5\% of the total vote were eliminated from the analysis. This preserved the $D=$6 `major'  parties in the following order: SPD, CDU, Green, Linke, AfD, and FDP.
  % (social democratic/labour), CDU (moderate conservative), Green (environmental), Linke (hard leftist; comprised of a lot of former DDR supporters), AfD (nationalist right-wing extremist), FDP (libertarian).
@@ -62,7 +61,7 @@ It turns out that it is in these regions where the Green party derives much of i
 \sum\limits_{i}^{D}v^i_m =1
 \end{equation}
 
-for all $v_m$. Furthermore, we can define the ideological vector (along various party lines) separating riding $m$ and $n$, as well as the magnitude of the distance separating them, using the Euclidean norm \footnote{ {\color{red} One might consider switching to KL divergence since the elements aren't independent? probably won't make a difference.)} } 
+for all $v_m$. Furthermore, we can define the ideological vector (along various party lines) separating riding $m$ and $n$, as well as the magnitude of the distance separating them, using the Euclidean norm \footnote{ One might also consider KL divergence as a measure of distance since the elements aren't independent. Anecdotal observation suggests this is unlikely to make a significant difference.) } 
 
 \begin{align}
 \vec u_{mn} &=& \vec {v_m} - \vec{v_n} \\
@@ -80,8 +79,7 @@ The first question we wish to address: is there an ideological division between 
 
 \begin{figure}[h]%
 \includegraphics[scale=.85]{../figures/OstWest_Vote2}%
-\caption{ Popular vote shares by district. Each point is one of the 1,779 districts. Only color encodes geographical location: Blue points are West, red points are East. The position of the points represents  its support among the major parties, although the perspective has been rotated to see the division between east and west most clearly. Units across this plane still correspond to percentage differences.
-Further dimensions of separation between data points cannot be visualized in a two-dimensional plot, and are therefore collapsed.}
+\caption{ Popular vote shares by district. Each point is one of the 1,779 districts, and the horizontal axis is defined by the average difference between East and West ridings. Blue points are West, red points are East, with location representing support among the major parties (the vertical axis is the first principle component among remaining axes). Units still correspond to percentage differences. }
 \label{fig:OstWest_div}%
 \end{figure}
 
@@ -99,7 +97,7 @@ For this reason, the data are plotted again in a t-SNE plot in Fig.~\ref{fig:tsn
 
 \subsection{clustering.}
 
-\item To further emphasize this point, cluster analysis of these points was then performed using $k-$means clustering for various values of $k$. When $k$ was set to 2,4,5,6... it was observed that the clusters were not robust: stochastic initial conditions led to random assignment of the data points into each cluster. {\color{red} Note to self: Calculate the Jacard index.} With $k=3$, however, clusters were robust. In this case, we observed an `Eastern' cluster that was dominated by over 90\% ridings east of the wall; a `Western' cluster was, likewise, dominated by over 90\% ridings west of the wall. However, an `integrated' cluster was also observed, comprising of 65\% ridings from the West and 35\% ridings from the East, \---corresponding very closely to the null expectation of 60.4\% (Western) and 39.6\%(Eastern) districts overall.
+\item To further emphasize this point, cluster analysis of these points was then performed using $k-$means clustering for various values of $k$. When $k$ was set to 2,4,5,6... it was observed that the clusters were not robust: stochastic initial conditions led to random assignment of the data points into each cluster\footnote{Here one might be interested in the Jacard index.}. With $k=3$, however, clusters were robust. In this case, we observed an `Eastern' cluster that was dominated by over 90\% ridings east of the wall; a `Western' cluster was, likewise, dominated by over 90\% ridings west of the wall. However, an `integrated' cluster was also observed, comprising of 65\% ridings from the West and 35\% ridings from the East, \---corresponding very closely to the null expectation of 60.4\% (Western) and 39.6\%(Eastern) districts overall.
 \begin{figure}[t]%
 \includegraphics[scale=.85]{../figures/clusters_Vote2}%
 \caption{The same data from Fig.~\ref{fig:OstWest_div} with data points color-coded by k-means clustering. When the `Integrated' cluster points are omitted, the separation between east and west dominated clusters increases to 25 percentage points. } 
@@ -140,12 +138,11 @@ So if we can see that there is a region where political integration is particula
 \end{figure}
 
 
-We then consider the question: does this pattern conform to any observable feature of the city? Fig.~\ref{fig:bahntrace} shows the same map overlayed with the subway plan. Does support for the Green party coincide with the "Ring bahn" --Maybe their supports live near S-bahn stations since they to take public transit than drive cars.
-
+We then consider the question: does this pattern conform to any observable feature of the city? Fig.~\ref{fig:bahntrace} shows the same map overlayed with the subway plan. Does support for the Green party coincide with the ``Ring bahn" --perhaps their supports live near S-bahn stations and take public transit rather than drive cars? perhaps Green voters are younger, more interested in environmental issues, less invested in historical divisions, and more likely to be renting apartments near the inner city rather than owning homes in the surrounding neighbourhoods?
 
 \begin{figure}[h]%
 \includegraphics[scale=.85]{../figures/map_W_TRANSITTRACE}%
-\caption{ The same data from Fig.~\ref{fig:map}, but with the U-bahn and S-bahn plan overlayed {\color{red} Graph is sloppy for the moment \--will be cleaned up later.}. What other factors of the city might be correlated with this structure?}
+\caption{ The same data from Fig.~\ref{fig:map}, but with the U-bahn and S-bahn plan overlayed (unfortunately, the downloaded train lines that were obtained suffered from rendering issues in the resulting graph.) What other factors of the city might be correlated with this structure?}
 \label{fig:bahntrace}%
 \end{figure}
 
@@ -181,7 +178,7 @@ This would seem to paint a picture of integrated German society: Young and urban
 
 Other observations that can be made from this data: 
 \begin{itemize}
-\item The Eastern cluster tends to be more politically polarized, with both Die Linke and AfD drawing major support. On top of this, the sum of major party support among the West cluster was 99.2\%, while in the East cluster it was only 97.3\% meaning that in the East cluster, citizens were more than 3.5 times as likely to vote for Fringe parties (\emph{in addition} to their support for more radical parties such as AfD or die Linke) {\color{red} Note-to-self: check the distribution of "invalid" votes, or people who abstained from voting at all \--cluster correlations with turnout?.}
+\item The Eastern cluster tends to be more politically polarized, with both Die Linke and AfD drawing major support. On top of this, the sum of major party support among the West cluster was 99.2\%, while in the East cluster it was only 97.3\% meaning that in the East cluster, citizens were more than 3.5 times as likely to vote for Fringe parties (\emph{in addition} to their support for more radical parties such as AfD or die Linke) \footnote{It may be worthwhile to check the distribution of "invalid" votes, or people who abstained from voting at all \--perhaps this cluster correlates with turnout?.}
 \item Look for outliers to the clustering trend:  e.g. that blue piece on the right that's physically east, but strongly ideologically `West', is that the same as the `tail' of red points at the bottom of Fig.~\ref{fig:OstWest_div}?
 \item SPD support seems approximately uniform across the region \--why are they only party whose support is independent of region?
 
