@@ -7,7 +7,7 @@ In Germany, in particular, the compulsory `Wohnmeldungs' allow for very detailed
 
 As such, machines can learn to identify the historical region of such regions (in German 'bezirk's) just by looking at the way people there vote --with over 95% accuracy, given certain allowances. Some regions are better integrated than others, and these regions are overwhelmingly dominated by a particular party. Can you guess which? 
 
-Full results are shown in [this report](Writeup/Berlin_report.pdf). Please note that this project is motivated by personal interest to develop and apply data science tools and associated fields of machine learning. Feel free to comment on remaining questions and features that could still be explored.
+Full results are shown in [this report](Writeup/Berlin_report.pdf). Please note that this project is motivated by personal interest to develop and apply data science tools and associated fields of machine learning. This is fun, socially relevant classifier problem with just the right amount of noise for a pedagogical "real world" social situation. Feel free to comment on remaining questions and features that could still be explored.
 
 ![](figures/BMap_Ccoded.png) 
 
